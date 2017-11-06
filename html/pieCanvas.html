@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"
+    />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>canvas绘制环形进度条</title>
+    <style type="text/css">
+        .chartbox {
+            width: 100px;
+            margin: 100px auto;
+        }
+        
+        .myChart {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chartbox">
+        <canvas class="myChart" id="myChart" width="100%" height="100%" data-total="100" data-curr="29.45"></canvas>
+    </div>
+    <script typet="text/javascript" src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        (function ($, window, undefined) {
+            $.fn.ringChart = function (options) {
+                var defaults = {};
+                var settings = $.extend({}, defaults, options);
+                var canvas = $(this).get(0);
+                var total = $(this).attr("data-total");
+                var curr = $(this).attr("data-curr");
+                var constrast = parseFloat(curr / total).toFixed(2); //比例
+                var context = null;
+                if (!canvas.getContext) {
+                    return;
+                }
+                // 定义开始点的大小
+                var startArc = Math.PI * 1.5;
+                // 根据占的比例画圆弧
+                var endArc = (Math.PI * 2) * constrast;
+                context = canvas.getContext("2d");
+                // 圆心文字
+                context.font = "28px Arial";
+                context.fillStyle = '#ff801a';
+                context.textBaseline = 'middle';
+                var text = (Number(curr / total) * 100).toFixed(0) + "%";
+                var tw = context.measureText(text).width;
+                context.fillText(text, 50 - tw / 2, 50);
+                // 绘制背景圆 
+                context.save();
+                context.beginPath();
+                context.strokeStyle = "#e7e7e7";
+                context.lineWidth = "4";
+                context.arc(50, 50, 44, 0, Math.PI * 2, false);
+                context.closePath();
+                context.stroke();
+                context.restore();
+                // 若为百分零则不必再绘制比例圆
+                if (curr / total == 0) {
+                    return;
+                }
+                // 绘制比例圆 
+                context.save();
+                context.beginPath();
+                context.strokeStyle = "#ff801a";
+                context.lineWidth = "4";
+                context.arc(50, 50, 44, startArc, (curr % total == 0 ? startArc : (endArc + startArc)), false);
+                context.stroke();
+                context.restore();
+            }
+        })($, window);
+        $("#myChart").ringChart();
+    </script>
+</body>
+
+</html>

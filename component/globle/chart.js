@@ -1,3 +1,7 @@
+// (function($) {
+//     console.log($('#chart_box'))
+// })(jQuery)
+
 let myChart = echarts.init(document.getElementById('chart_box'));
 
 let myOption = {
